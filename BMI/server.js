@@ -5,8 +5,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const app = express();
 const PORT = 3000;
-
-app.use(cors({ origin: "*" })); // Allow all origins
+ // Allow all origins
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
