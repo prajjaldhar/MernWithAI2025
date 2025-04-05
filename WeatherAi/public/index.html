@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot</title>
+  </head>
+  <body
+    class="flex justify-center items-center h-screen bg-slate-900 text-white transition-colors"
+    id="theme"
+  >
+    <!-- Theme Toggle Button -->
+    <button
+      onclick="toggleTheme()"
+      class="absolute top-4 right-4 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition"
+    >
+      Toggle Theme
+    </button>
+
+    <div
+      class="w-full max-w-lg bg-slate-800 text-white rounded-lg shadow-lg p-4"
+    >
+      <h2 class="text-xl font-bold text-center mb-4">AI Chatbot</h2>
+      <div
+        id="chatbox"
+        class="h-80 overflow-y-auto border border-slate-700 p-3 rounded-lg bg-slate-700 mb-3"
+      ></div>
+      <div class="flex">
+        <input
+          id="userInput"
+          type="text"
+          placeholder="Type your message..."
+          class="flex-1 border border-slate-600 bg-slate-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button
+          onclick="sendMessage()"
+          class="ml-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+        >
+          Send
+        </button>
+      </div>
+    </div>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Interview Questions</title>
+  </head>
+  <body
+    class="bg-gray-900 text-white flex justify-center items-center min-h-screen"
+  >
+    <div class="w-full max-w-3xl p-6 bg-gray-800 rounded-lg shadow-lg">
+      <h1 class="text-2xl font-bold text-center mb-4">
+        AI Interview Questions
+      </h1>
+
+      <div class="mb-4">
+        <label for="category" class="block text-lg font-semibold mb-2"
+          >Select Category:</label
+        >
+        <select id="category" class="w-full p-3 bg-gray-700 text-white rounded">
+          <option value="">-- Select Category --</option>
+          <option value="DSA questions in JAVA">DSA questions in JAVA</option>
+          <option value="DSA questions in Python">
+            DSA questions in Python
+          </option>
+          <option value="DSA questions in C++">DSA questions in C++</option>
+          <option value="DSA questions in JavaScript">
+            DSA questions in JavaScript
+          </option>
+          <option value="DSA questions in C">DSA questions in C</option>
+          <option value="Interview Questions in JS">
+            Interview Questions in JS
+          </option>
+          <option value="Interview Questions of React">
+            Interview Questions of React
+          </option>
+          <option value="Interview Questions of Node">
+            Interview Questions of Node
+          </option>
+          <option value="Interview Questions of Express">
+            Interview Questions of Express
+          </option>
+          <option value="Interview Questions of MongoDB">
+            Interview Questions of MongoDB
+          </option>
+        </select>
+      </div>
+
+      <button
+        id="fetch-btn"
+        class="w-full bg-blue-500 hover:bg-blue-600 p-3 rounded font-semibold"
+      >
+        Search
+      </button>
+
+      <div id="questions-container" class="mt-6"></div>
+    </div>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
