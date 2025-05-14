@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENAI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 app.use(express.json());
 app.use(cors());
@@ -26,7 +26,7 @@ const QUESTION_CATEGORIES = [
 ];
 
 const SYSTEM_PROMPT = `
-You are an AI that generates coding and interview questions along with their answers.
+You are an AI that generates coding and interview questions along with their answers Considering both theory and practical Questions in which 4 theory questions should be there.
 
 Guidelines:
 - If the user asks for a category, return a JSON object:
