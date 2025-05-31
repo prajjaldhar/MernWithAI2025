@@ -16,7 +16,7 @@ const genai = new GoogleGenerativeAI("AIzaSyDuzpbFP8szmeOe0NPU98oepvGe74zmRiE");
 app.post("/generate-advice", async (req, res) => {
   try {
     const { bmi } = req.body;
-    const model = genai.getGenerativeModel({ model: "gemini-1.5-pro" });
+    const model = genai.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `My BMI is ${bmi}. Provide a structured JSON response with these keys:
     - best_exercise: Suggest the best exercise based on my BMI.
@@ -28,7 +28,7 @@ app.post("/generate-advice", async (req, res) => {
     - caloric_intake: Suggest an ideal daily caloric intake.
     - fitness_apps: Recommend the best apps for tracking diet and exercise with pros and cons.
     - stress_management: Provide mindfulness or relaxation techniques.
-    - Lifestyle & Habits Enhancements:Suggest an ideal morning and night routine to support my health and fitness goals.Daily Activity Recommendation.
+    - Lifestyle & Habits Enhancements:Suggest an ideal morning and night routine to support my health and fitness goals.Daily Activity Recommendation.Day to day Task.
     - Books & Podcasts for Health Improvement:List top 3 books and top 3 podcasts that can help me improve my fitness and well-being.
     - best_motivational_quotes: Give a motivational quote to keep me inspired.
     

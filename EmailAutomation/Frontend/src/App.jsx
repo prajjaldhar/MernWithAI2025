@@ -21,7 +21,7 @@ const AppWrapper = () => {
   const [storedUser, setStoredUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const validPaths = ["/login", "/signup", "/admin", "/emailautomation"];
+  const validPaths = ["/", "/login", "/signup", "/admin", "/emailautomation"];
   const isWildcardRoute = useMemo(() => {
     return !validPaths.includes(location.pathname);
   }, [location.pathname]);
@@ -76,6 +76,16 @@ const AppWrapper = () => {
 
       <main className="flex-1 p-6 overflow-y-auto mt-16">
         <Routes>
+          <Route
+            path="/"
+            element={
+              storedUser ? (
+                <Navigate to="/admin" replace />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
           <Route
             path="/login"
             element={
