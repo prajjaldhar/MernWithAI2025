@@ -13,6 +13,36 @@ function App() {
   const [forceSubmit, setForceSubmit] = useState(false);
   const [showAutoSubmitWarning, setShowAutoSubmitWarning] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [tabSwitchCount, setTabSwitchCount] = useState(0);
+  const [tabSwitchWarning, setTabSwitchWarning] = useState(false);
+
+  // Auto-submit if user changes tab
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden && !isSubmitted && quizData.length > 0) {
+        setTabSwitchCount((prev) => {
+          const newCount = prev + 1;
+
+          if (newCount === 1) {
+            setTabSwitchWarning(true); // Show warning after 1st switch
+          } else if (newCount >= 2) {
+            // Auto-submit after 2nd switch
+            setForceSubmit(true);
+            setIsSubmitted(true);
+            setShowAutoSubmitWarning(false);
+            setTabSwitchWarning(false);
+          }
+
+          return newCount;
+        });
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [isSubmitted, quizData]);
 
   // Fetch quiz data on searchQuery change
   useEffect(() => {
@@ -148,6 +178,16 @@ function App() {
                 second{remainingTime > 1 ? "s" : ""}!
               </div>
             )}
+
+          {tabSwitchWarning && !isSubmitted && (
+            <div
+              className="text-center mb-4 text-orange-400 font-semibold text-lg animate-pulse"
+              role="alert"
+              aria-live="assertive"
+            >
+              ⚠️ Don't switch the tab! Quiz will auto-submit if you do it again.
+            </div>
+          )}
 
           <Quiz
             questions={quizData}

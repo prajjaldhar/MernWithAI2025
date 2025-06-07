@@ -1,107 +1,200 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import QuestionCard from "./QuestionCard";
 
 const Quiz = ({ questions, forceSubmit, onSubmit }) => {
   const [answers, setAnswers] = useState({});
+  const [visited, setVisited] = useState(new Set());
   const [submitted, setSubmitted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
-  const [markedForReview, setMarkedForReview] = useState(new Set());
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [markedReview, setMarkedReview] = useState(new Set());
 
-  // Update answer for a question
+  const totalQuestions = questions.length;
+
+  const {
+    notVisitedCount,
+    notAnsweredCount,
+    answeredOnly,
+    markedOnly,
+    answeredAndMarked,
+  } = useMemo(() => {
+    const notVisited = totalQuestions - visited.size;
+
+    const notAnswered = [...visited].filter(
+      (idx) => (!answers[idx] || answers[idx] === "") && !markedReview.has(idx)
+    ).length;
+
+    const answeredOnlyCount = Object.keys(answers).filter(
+      (idx) => answers[idx] && !markedReview.has(Number(idx))
+    ).length;
+
+    const markedOnlyCount = [...markedReview].filter(
+      (idx) => !answers[idx] || answers[idx] === ""
+    ).length;
+
+    const answeredAndMarkedCount = [...markedReview].filter(
+      (idx) => answers[idx]
+    ).length;
+
+    return {
+      notVisitedCount: notVisited,
+      notAnsweredCount: notAnswered,
+      answeredOnly: answeredOnlyCount,
+      markedOnly: markedOnlyCount,
+      answeredAndMarked: answeredAndMarkedCount,
+    };
+  }, [answers, markedReview, visited, totalQuestions]);
+
   const handleAnswerChange = (index, answer) => {
+    if (submitted) return;
     setAnswers((prev) => ({ ...prev, [index]: answer }));
   };
 
-  // Toggle review mark for a question
-  const toggleReviewMark = (index) => {
-    setMarkedForReview((prev) => {
-      const updatedSet = new Set(prev);
-      if (updatedSet.has(index)) updatedSet.delete(index);
-      else updatedSet.add(index);
-      return updatedSet;
+  const toggleMarkedReview = (index) => {
+    if (submitted) return;
+    setMarkedReview((prev) => {
+      const updated = new Set(prev);
+      updated.has(index) ? updated.delete(index) : updated.add(index);
+      return updated;
     });
   };
 
-  // Submit quiz and calculate score
-  const submitQuiz = () => {
-    setSubmitted(true);
-    setShowSubmitConfirm(false);
+  const calculateScore = useCallback(() => {
+    return questions.reduce(
+      (acc, q, idx) => (answers[idx] === q.correctAnswer ? acc + 1 : acc),
+      0
+    );
+  }, [answers, questions]);
 
-    if (onSubmit) {
-      const score = questions.reduce(
-        (total, question, idx) =>
-          answers[idx] === question.correctAnswer ? total + 1 : total,
-        0
-      );
-      onSubmit({ answers, score });
+  const handleClearResponse = (index) => {
+    if (submitted) return;
+    setAnswers((prev) => {
+      const updated = { ...prev };
+      delete updated[index];
+      return updated;
+    });
+  };
+
+  const handleSubmit = () => {
+    const score = calculateScore();
+    setSubmitted(true);
+    setShowConfirm(false);
+    onSubmit?.({ answers, score });
+  };
+
+  const navigateToQuestion = (idx) => {
+    setCurrentQuestion(idx);
+    if (!submitted) {
+      setVisited((prev) => {
+        const updated = new Set(prev);
+        updated.add(idx);
+        return updated;
+      });
     }
   };
 
-  // Auto-submit when forceSubmit prop changes
   useEffect(() => {
-    if (forceSubmit && !submitted) {
-      submitQuiz();
-    }
-  }, [forceSubmit, submitted]);
+    if (submitted) return;
+    setVisited((prev) => {
+      const updated = new Set(prev);
+      updated.add(currentQuestion);
+      return updated;
+    });
+  }, [currentQuestion]);
 
-  // Calculate score for display
-  const score = questions.reduce(
-    (total, question, idx) =>
-      answers[idx] === question.correctAnswer ? total + 1 : total,
-    0
-  );
+  useEffect(() => {
+    if (forceSubmit && !submitted) handleSubmit();
+  }, [forceSubmit, submitted, handleSubmit]);
 
-  const allAnswered = questions.length === Object.keys(answers).length;
+  const score = calculateScore();
 
   return (
-    <div className="max-w-6xl mx-auto text-white relative flex flex-col md:flex-row gap-6 p-6">
-      {/* Sidebar: Question Tracker */}
-      <aside
-        className="bg-gray-900 rounded-xl p-4 overflow-y-auto max-h-64 md:max-h-[700px] flex md:flex-col items-center md:items-start justify-center md:justify-start gap-4 md:gap-6 w-full md:w-72"
-        style={{ minWidth: "112px" }}
-      >
-        <h2 className="text-center font-semibold mb-2 md:mb-6 text-yellow-400 text-lg w-full">
+    <div className="max-w-6xl mx-auto p-6 text-white flex flex-col md:flex-row gap-6 relative">
+      {/* Sidebar Tracker */}
+      <aside className="bg-gray-900 p-4 rounded-xl overflow-y-auto max-h-64 md:max-h-[700px] w-full md:w-72 flex flex-col items-center md:items-start gap-4 min-w-[112px]">
+        <h2 className="text-yellow-400 text-lg font-semibold mb-2 md:mb-6 w-full text-center">
           Tracker
         </h2>
 
+        <div className="grid grid-cols-2 gap-3 text-xs text-gray-300 w-full mb-4">
+          {[
+            {
+              count: notVisitedCount,
+              label: "Not Visited",
+              bg: "bg-gray-400",
+              text: "text-black",
+            },
+            {
+              count: notAnsweredCount,
+              label: "Not Answered",
+              bg: "bg-red-600",
+              text: "text-white",
+            },
+            {
+              count: answeredOnly,
+              label: "Answered",
+              bg: "bg-green-600",
+              text: "text-white",
+            },
+            {
+              count: markedOnly,
+              label: "Marked for Review",
+              bg: "bg-purple-700",
+              text: "text-white",
+            },
+          ].map(({ count, label, bg, text }, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <div
+                className={`w-6 h-6 rounded flex items-center justify-center text-sm font-bold ${bg} ${text}`}
+              >
+                {count}
+              </div>
+              {label}
+            </div>
+          ))}
+          <div className="col-span-2 flex items-center gap-2">
+            <div className="relative w-6 h-6 bg-purple-700 text-white rounded-full flex items-center justify-center text-sm font-bold">
+              {answeredAndMarked}
+              <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-400 rounded-full" />
+            </div>
+            Answered & Marked for Review (will be considered)
+          </div>
+        </div>
+
+        {/* Question Navigator */}
         <div className="grid grid-cols-8 md:grid-cols-5 grid-rows-2 md:grid-rows-4 gap-2 md:gap-4 w-full">
           {questions.map((_, idx) => {
-            const answered = answers.hasOwnProperty(idx);
+            const isAnswered = idx in answers;
             const isCurrent = idx === currentQuestion;
-            const isMarked = markedForReview.has(idx);
+            const isMarked = markedReview.has(idx);
 
-            let bgColor = "bg-gray-600";
-            if (isCurrent) bgColor = "bg-purple-700";
-            else if (isMarked) bgColor = "bg-purple-500";
-            else if (answered) bgColor = "bg-green-600";
+            const bgColor = isCurrent
+              ? "bg-amber-500"
+              : isMarked
+              ? "bg-purple-500"
+              : isAnswered
+              ? "bg-green-600"
+              : "bg-gray-600";
 
             return (
-              <div key={idx} className="relative flex flex-col items-center">
+              <div key={idx} className="flex flex-col items-center">
                 <button
-                  onClick={() => setCurrentQuestion(idx)}
-                  title={`Question ${idx + 1} ${
-                    answered ? "(Answered)" : "(Unanswered)"
-                  }${isMarked ? " - Marked to Review" : ""}`}
-                  className={`${bgColor} text-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer hover:brightness-125 transition`}
-                  aria-current={isCurrent}
+                  onClick={() => navigateToQuestion(idx)}
+                  className={`${bgColor} w-10 h-10 rounded-full flex items-center justify-center hover:brightness-125 transition`}
+                  title={`Q${idx + 1} ${isAnswered ? "(Answered)" : ""} ${
+                    isMarked ? "- Marked" : ""
+                  }`}
+                  aria-label={`Question ${idx + 1}`}
                 >
                   {idx + 1}
                 </button>
-
-                {/* Review mark toggle */}
                 <button
-                  onClick={() => toggleReviewMark(idx)}
-                  title={isMarked ? "Remove Review Mark" : "Mark for Review"}
-                  className={`mt-1 w-4 h-4 rounded-full border-2 border-purple-400 transition 
-                    ${isMarked ? "bg-purple-400" : "bg-transparent"} 
-                    hover:bg-purple-600`}
+                  onClick={() => toggleMarkedReview(idx)}
+                  className={`mt-1 w-4 h-4 rounded-full border-2 border-purple-400 transition ${
+                    isMarked ? "bg-purple-400" : "bg-transparent"
+                  } hover:bg-purple-600`}
+                  title={isMarked ? "Unmark" : "Mark for Review"}
                   aria-pressed={isMarked}
-                  aria-label={
-                    isMarked
-                      ? "Unmark question for review"
-                      : "Mark question for review"
-                  }
                 />
               </div>
             );
@@ -109,10 +202,10 @@ const Quiz = ({ questions, forceSubmit, onSubmit }) => {
         </div>
       </aside>
 
-      {/* Main quiz area */}
-      <section className="flex-1 bg-gray-800 shadow-lg shadow-yellow-500/50 rounded-xl p-6 flex flex-col">
-        <div className="mb-4 text-center text-yellow-300 font-semibold text-xl">
-          Question {currentQuestion + 1} of {questions.length}
+      {/* Main Content */}
+      <section className="flex-1 p-6 bg-gray-800 shadow-lg shadow-yellow-500/50 rounded-xl flex flex-col">
+        <div className="text-center text-yellow-300 font-semibold text-xl mb-4">
+          Question {currentQuestion + 1} of {totalQuestions}
         </div>
 
         <QuestionCard
@@ -120,70 +213,60 @@ const Quiz = ({ questions, forceSubmit, onSubmit }) => {
           question={questions[currentQuestion]}
           selected={answers[currentQuestion]}
           onChange={handleAnswerChange}
+          onClear={handleClearResponse}
           submitted={submitted}
         />
 
-        <div className="flex flex-wrap justify-between mt-6 gap-4">
+        <div className="flex flex-wrap justify-between gap-4 mt-6">
           <button
-            onClick={() => setCurrentQuestion(currentQuestion - 1)}
+            onClick={() => navigateToQuestion(currentQuestion - 1)}
             disabled={currentQuestion === 0}
-            aria-disabled={currentQuestion === 0}
-            className="bg-gray-600 px-8 py-3 rounded-full cursor-pointer hover:bg-gray-700 disabled:opacity-50 transition flex-1 min-w-[100px]"
+            className="bg-gray-600 px-8 py-3 rounded-full hover:bg-gray-700 transition flex-1 min-w-[100px] disabled:opacity-50"
           >
             Previous
           </button>
 
-          {currentQuestion < questions.length - 1 && (
+          {currentQuestion < totalQuestions - 1 ? (
             <button
-              onClick={() => setCurrentQuestion(currentQuestion + 1)}
-              className="bg-blue-600 px-12 py-3 rounded-full cursor-pointer hover:bg-blue-700 transition flex-1 min-w-[100px]"
+              onClick={() => navigateToQuestion(currentQuestion + 1)}
+              className="bg-blue-600 px-12 py-3 rounded-full hover:bg-blue-700 transition flex-1 min-w-[100px]"
             >
               Next
             </button>
-          )}
-
-          {currentQuestion === questions.length - 1 && !submitted && (
+          ) : !submitted ? (
             <button
-              onClick={() => setShowSubmitConfirm(true)}
-              className={`px-8 py-3 rounded-full cursor-pointer transition hover:bg-green-700 flex-1 min-w-[150px] ${
-                !allAnswered ? "bg-gray-600 cursor-not-allowed" : "bg-green-600"
-              }`}
-              title={
-                !allAnswered
-                  ? "Answer all questions before submitting"
-                  : undefined
-              }
+              onClick={() => setShowConfirm(true)}
+              className="bg-green-600 hover:bg-green-700 px-8 py-3 rounded-full transition flex-1 min-w-[150px]"
             >
               Submit Quiz
             </button>
-          )}
+          ) : null}
         </div>
 
-        {/* Score display */}
         {submitted && (
-          <div className="mt-6 text-center text-2xl font-semibold text-green-400">
-            Your Score: {score} / {questions.length}
+          <div className="mt-6 text-center text-green-400 text-2xl font-semibold">
+            Your Score: {score} / {totalQuestions}
           </div>
         )}
       </section>
 
-      {/* Submit Confirmation Modal */}
-      {showSubmitConfirm && (
-        <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 bg-opacity-60 flex justify-center items-center z-50 px-4">
-          <div className="bg-gray-800 p-10 rounded-xl shadow-lg text-center max-w-sm w-full shadow-yellow-500">
-            <h2 className="text-xl font-bold text-yellow-400 mb-6">
-              Are you sure you want to submit the quiz?
+      {/* Submission Confirmation */}
+      {showConfirm && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-60 flex justify-center items-center px-4">
+          <div className="bg-gray-800 p-10 rounded-xl shadow-lg text-center w-full max-w-sm">
+            <h2 className="text-yellow-400 text-xl font-bold mb-6">
+              Are you sure you want to submit?
             </h2>
             <div className="flex justify-center gap-6">
               <button
-                onClick={() => setShowSubmitConfirm(false)}
-                className="bg-gray-600 px-8 py-3 rounded-full cursor-pointer hover:bg-gray-700 transition"
+                onClick={() => setShowConfirm(false)}
+                className="bg-gray-600 px-8 py-3 rounded-full hover:bg-gray-700 transition"
               >
                 Cancel
               </button>
               <button
-                onClick={submitQuiz}
-                className="bg-green-600 px-8 py-3 rounded-full cursor-pointer hover:bg-green-700 transition"
+                onClick={handleSubmit}
+                className="bg-green-600 px-8 py-3 rounded-full hover:bg-green-700 transition"
               >
                 Submit
               </button>
