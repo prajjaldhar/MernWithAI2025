@@ -87,3 +87,8 @@ exports.addQuizToCourse = async (req, res) => {
   }
 };
 
+exports.getCourse = async (req, res) => {
+  const result = await Course.find({}, { _id: 1, courseId: 1, title: 1 });
+
+  return res.status(200).json({ msg: "course find", result });
+};

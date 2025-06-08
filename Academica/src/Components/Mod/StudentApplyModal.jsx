@@ -1,58 +1,26 @@
-import React, { useState } from "react";
-
-const allCourses = [
-  { label: "C++ Beginner", value: "cpp-beginner" },
-  { label: "C++ Intermediate", value: "cpp-intermediate" },
-  { label: "C++ Advanced", value: "cpp-advanced" },
-  { label: "Java Intermediate", value: "java-intermediate" },
-  { label: "Java Advanced", value: "java-advanced" },
-  { label: "Python Beginner", value: "python-beginner" },
-  { label: "Python Intermediate", value: "python-intermediate" },
-  { label: "Python Advanced", value: "python-advanced" },
-  { label: "React Basics", value: "react-basics" },
-  { label: "React Advanced", value: "react-advanced" },
-  { label: "Node.js Beginner", value: "nodejs-beginner" },
-  { label: "Node.js Intermediate", value: "nodejs-intermediate" },
-  { label: "Node.js Advanced", value: "nodejs-advanced" },
-  { label: "Data Structures", value: "data-structures" },
-  { label: "Algorithms", value: "algorithms" },
-  { label: "Machine Learning", value: "machine-learning" },
-  { label: "Deep Learning", value: "deep-learning" },
-  { label: "Database Fundamentals", value: "db-fundamentals" },
-  { label: "SQL Advanced", value: "sql-advanced" },
-  { label: "NoSQL Basics", value: "nosql-basics" },
-  { label: "Web Development", value: "web-development" },
-  { label: "Mobile App Development", value: "mobile-app-dev" },
-  { label: "Cloud Computing Basics", value: "cloud-computing" },
-  { label: "DevOps Essentials", value: "devops-essentials" },
-  { label: "Cybersecurity Fundamentals", value: "cybersecurity" },
-  { label: "UI/UX Design", value: "ui-ux-design" },
-  { label: "JavaScript Basics", value: "js-basics" },
-  { label: "TypeScript Intermediate", value: "typescript-intermediate" },
-  { label: "Angular Basics", value: "angular-basics" },
-  { label: "Vue.js Fundamentals", value: "vuejs-fundamentals" },
-  { label: "Kubernetes Basics", value: "kubernetes-basics" },
-  { label: "Blockchain Basics", value: "blockchain-basics" },
-  { label: "Big Data Introduction", value: "big-data-intro" },
-  { label: "Artificial Intelligence", value: "artificial-intelligence" },
-  { label: "Software Testing", value: "software-testing" },
-  { label: "Agile Methodologies", value: "agile-methodologies" },
-  { label: "Project Management", value: "project-management" },
-  { label: "Digital Marketing", value: "digital-marketing" },
-  { label: "SEO Fundamentals", value: "seo-fundamentals" },
-  { label: "Cloud AWS", value: "cloud-aws" },
-  { label: "Cloud Azure", value: "cloud-azure" },
-  { label: "Cloud GCP", value: "cloud-gcp" },
-  { label: "Docker Essentials", value: "docker-essentials" },
-  { label: "Linux Administration", value: "linux-admin" },
-  { label: "Ethical Hacking", value: "ethical-hacking" },
-  { label: "Data Analysis", value: "data-analysis" },
-  { label: "Excel for Beginners", value: "excel-beginners" },
-  { label: "Power BI", value: "power-bi" },
-  { label: "Tableau Basics", value: "tableau-basics" },
-];
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const StudentApplyModal = ({ isOpen, onClose }) => {
+  const [allCourses, setAllCourses] = useState([]);
+  const [loadingCourses, setLoadingCourses] = useState(true);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/getcourse");
+        setAllCourses(response.data); // assuming response.data is an array of {label, value}
+      } catch (error) {
+        console.error("Failed to fetch courses:", error);
+      } finally {
+        setLoadingCourses(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+  // console.log("courses>>>>", allCourses);
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -68,7 +36,7 @@ const StudentApplyModal = ({ isOpen, onClose }) => {
     country: "",
     pincode: "",
     bio: "",
-    courses: ["cpp-beginner"],
+    courses: [],
   });
 
   const [preview, setPreview] = useState(null);
@@ -105,26 +73,41 @@ const StudentApplyModal = ({ isOpen, onClose }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const data = new FormData();
     for (const key in formData) {
       if (key === "courses") {
-        formData.courses.forEach((course) => data.append("courses[]", course));
+        // Convert array to JSON string before appending
+        data.append("courses", JSON.stringify(formData.courses));
       } else {
         data.append(key, formData[key]);
       }
     }
 
-    console.log("Submitting FormData");
+    console.log("Submitting FormData>>>>");
+    for (let [key, value] of data.entries()) {
+      console.log(`${key}:`, value);
+    }
+
     // axios.post('/api/apply', data); // Example usage
+    try {
+      const response = await axios.post("http://localhost:5000/signup", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("Signup response:", response.data);
+    } catch (error) {
+      console.error("Signup failed:", error);
+    }
   };
 
   if (!isOpen) return null;
 
-  const filteredCourses = allCourses.filter((course) =>
-    course.label.toLowerCase().includes(courseSearch.toLowerCase())
+  const filteredCourses = allCourses.result?.filter((course) =>
+    course?.title?.toLowerCase().includes(courseSearch.toLowerCase())
   );
 
   return (
@@ -276,23 +259,27 @@ const StudentApplyModal = ({ isOpen, onClose }) => {
               role="list"
               aria-label="Courses checklist"
             >
-              {filteredCourses.length === 0 ? (
+              {loadingCourses ? (
+                <p className="col-span-full text-center text-gray-500">
+                  Loading courses...
+                </p>
+              ) : filteredCourses.length === 0 ? (
                 <p className="col-span-full text-center text-gray-500">
                   No courses found.
                 </p>
               ) : (
-                filteredCourses.map(({ label, value }) => (
+                filteredCourses.map(({ title, _id }) => (
                   <label
-                    key={value}
+                    key={_id}
                     className="inline-flex items-center space-x-2 cursor-pointer hover:bg-blue-50 rounded p-2"
                   >
                     <input
                       type="checkbox"
-                      checked={formData.courses.includes(value)}
-                      onChange={() => handleCourseToggle(value)}
+                      checked={formData.courses.includes(_id)}
+                      onChange={() => handleCourseToggle(_id)}
                       className="form-checkbox text-blue-600"
                     />
-                    <span>{label}</span>
+                    <span>{title}</span>
                   </label>
                 ))
               )}
