@@ -307,7 +307,7 @@ const StudentApplyModal = ({ isOpen, onClose }) => {
                     No courses found.
                   </p>
                 ) : (
-                  filteredCourses.map(({ title, _id }) => (
+                  filteredCourses?.map(({ title, _id }) => (
                     <label
                       key={_id}
                       className="inline-flex items-center space-x-2 cursor-pointer hover:bg-blue-50 rounded p-2"

@@ -4,7 +4,7 @@ const StudentLoginModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
   const [isLoginWithEmail, setLoginWithEmail] = useState(true);
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-99">
       <div className="bg-white rounded-xl w-full max-w-3xl shadow-xl overflow-hidden relative">
         {/* Close button */}
         <button

@@ -5,6 +5,7 @@ import HomePage from "./Pages/HomePage";
 import DashboardLayout from "./Layout/DashboardLayout";
 import UserDetails from "./Pages/Dashboard/UserDetails";
 import CourseDetails from "./Pages/Dashboard/CourseDetails";
+import ChangePassword from "./Pages/Dashboard/ChangePassword";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route index element={<Navigate to="userdetails" replace />} />
           <Route path="userdetails" element={<UserDetails />} />
           <Route path="coursedetails" element={<CourseDetails />} />
+          <Route path="changepassword" element={<ChangePassword />} />
         </Route>
       </Routes>
     </BrowserRouter>
