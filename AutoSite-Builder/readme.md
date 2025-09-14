@@ -1,42 +1,42 @@
 ```markdown
 # ✨ Gemini File Generator (Node.js + ESM)
 
-[![Node.js](https://img.shields.io/badge/Node.js-18+-green?logo=node.js)](https://nodejs.org/)
-[![Google Gemini API](https://img.shields.io/badge/Google-Gemini-blue?logo=google)](https://ai.google.dev/)
+![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)
+![Google Gemini](https://img.shields.io/badge/Google-Gemini-blue)
 
 🚀 This project demonstrates how to use **Google Gemini API** to automatically generate **HTML + CSS + JavaScript** files in a strict response format.
 
 The script:
+
 1. 📝 Defines a **system prompt** that instructs Gemini to reply with structured sections:  
    `START → THINK → OBSERVE → ACTION → OUTPUT`
 2. 🤖 Sends the user’s request to Gemini and gets a **well-structured code response**.
-3. 💾 Parses the output to extract two files:  
-   - `index.html` (with internal CSS for design)  
+3. 💾 Parses the output to extract two files:
+   - `index.html` (with internal CSS for design)
    - `script.js` (with runnable JS code)
 4. 📂 Saves the files locally and provides run instructions.
 
 ---
 
 ## 📸 Demo Workflow
-
 ```
 
 System Prompt ➝ Gemini ➝ Structured Output ➝ Extract HTML/JS ➝ Save Files
 
 ```
 
-- **Input**: "Create a small, beginner-friendly web page that explains what ReactJS is and includes a button toggle demo."  
+- **Input**: "Create a small, beginner-friendly web page that explains what ReactJS is and includes a button toggle demo."
 - **Output**: Beautiful `index.html` + `script.js` files generated automatically.
 
 ---
 
 ## ⚡ Features
 
-- ✅ Structured prompt format with **START, THINK, OBSERVE, ACTION, OUTPUT**  
-- ✅ Auto-parses Gemini’s output to extract **HTML** and **JavaScript**  
-- ✅ Saves files directly to your project folder  
-- ✅ Internal CSS for **clean design** 🎨  
-- ✅ Fully **customizable prompts**  
+- ✅ Structured prompt format with **START, THINK, OBSERVE, ACTION, OUTPUT**
+- ✅ Auto-parses Gemini’s output to extract **HTML** and **JavaScript**
+- ✅ Saves files directly to your project folder
+- ✅ Internal CSS for **clean design** 🎨
+- ✅ Fully **customizable prompts**
 
 ---
 
@@ -45,11 +45,11 @@ System Prompt ➝ Gemini ➝ Structured Output ➝ Extract HTML/JS ➝ Save File
 ```
 
 📦 gemini-file-generator
-┣ 📜 index.js        # Main script (Node.js, ESM)
-┣ 📜 index.html      # Generated HTML (auto-saved)
-┣ 📜 script.js       # Generated JavaScript (auto-saved)
-┣ 📜 package.json    # Dependencies
-┗ 📜 README.md       # Project documentation
+┣ 📜 index.js # Main script (Node.js, ESM)
+┣ 📜 index.html # Generated HTML (auto-saved)
+┣ 📜 script.js # Generated JavaScript (auto-saved)
+┣ 📜 package.json # Dependencies
+┗ 📜 README.md # Project documentation
 
 ````
 
@@ -117,8 +117,8 @@ generateTextWithSystemPrompt(
 
 4. **File Saving**
 
-   * `index.html` is written to disk.
-   * `script.js` is saved separately and linked in HTML.
+   - `index.html` is written to disk.
+   - `script.js` is saved separately and linked in HTML.
 
 ---
 
@@ -126,9 +126,9 @@ generateTextWithSystemPrompt(
 
 ✨ Example generated web page:
 
-* Explains ReactJS in simple terms
-* Styled with **internal CSS**
-* Includes a **button toggle demo** powered by vanilla JS
+- Explains ReactJS in simple terms
+- Styled with **internal CSS**
+- Includes a **button toggle demo** powered by vanilla JS
 
 ---
 
@@ -145,4 +145,5 @@ Feel free to use, modify, and distribute with attribution.
 🌟 Contributions, feedback, and ⭐ stars are welcome!
 
 ```
+
 ```
