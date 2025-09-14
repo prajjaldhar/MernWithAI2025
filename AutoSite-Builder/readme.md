@@ -1,5 +1,5 @@
-```markdown
-# ✨ Gemini File Generator (Node.js + ESM)
+markdown
+ ✨ Gemini File Generator (Node.js + ESM)
 
 ![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)
 ![Google Gemini](https://img.shields.io/badge/Google-Gemini-blue)
@@ -18,19 +18,19 @@ The script:
 
 ---
 
-## 📸 Demo Workflow
-```
+ 📸 Demo Workflow
+
 
 System Prompt ➝ Gemini ➝ Structured Output ➝ Extract HTML/JS ➝ Save Files
 
-```
+
 
 - **Input**: "Create a small, beginner-friendly web page that explains what ReactJS is and includes a button toggle demo."
 - **Output**: Beautiful `index.html` + `script.js` files generated automatically.
 
 ---
 
-## ⚡ Features
+ ⚡ Features
 
 - ✅ Structured prompt format with **START, THINK, OBSERVE, ACTION, OUTPUT**
 - ✅ Auto-parses Gemini’s output to extract **HTML** and **JavaScript**
@@ -40,71 +40,71 @@ System Prompt ➝ Gemini ➝ Structured Output ➝ Extract HTML/JS ➝ Save File
 
 ---
 
-## 📂 Project Structure
+ 📂 Project Structure
 
-```
+
 
 📦 gemini-file-generator
-┣ 📜 index.js # Main script (Node.js, ESM)
-┣ 📜 index.html # Generated HTML (auto-saved)
-┣ 📜 script.js # Generated JavaScript (auto-saved)
-┣ 📜 package.json # Dependencies
-┗ 📜 README.md # Project documentation
+┣ 📜 index.js  Main script (Node.js, ESM)
+┣ 📜 index.html  Generated HTML (auto-saved)
+┣ 📜 script.js  Generated JavaScript (auto-saved)
+┣ 📜 package.json  Dependencies
+┗ 📜 README.md  Project documentation
 
-````
+`
 
 ---
 
-## 🔧 Installation & Setup
+ 🔧 Installation & Setup
 
-### 1️⃣ Clone this repo
-```bash
+ 1️⃣ Clone this repo
+
 git clone https://github.com/your-username/gemini-file-generator.git
 cd gemini-file-generator
-````
 
-### 2️⃣ Install dependencies
 
-```bash
+ 2️⃣ Install dependencies
+
+
 npm install @google/generative-ai
-```
 
-### 3️⃣ Add your Gemini API Key
+
+ 3️⃣ Add your Gemini API Key
 
 Replace the placeholder key inside **index.js**:
 
-```js
+js
 const genai = new GoogleGenerativeAI("YOUR_GEMINI_API_KEY");
-```
+
 
 👉 Get your key from [Google AI Studio](https://aistudio.google.com/).
 
 ---
 
-## ▶️ Usage
+ ▶️ Usage
 
 Run the generator with a **custom user prompt**:
 
-```bash
+
 node index.js
-```
+
 
 Example user prompt inside the script:
 
-```js
+
 generateTextWithSystemPrompt(
   "Create a small, beginner-friendly web page with beautiful css for design that explains what ReactJS is and includes a button toggle demo."
 );
-```
 
-### 💻 Running the generated files
+
+ 💻 Running the generated files
 
 1. Open `index.html` in your browser 🌐
 2. The page will load with styled content and interactive JS 🎉
 
 ---
 
-## 🛠️ How It Works
+ 🛠️ How It Works
 
 1. **System Prompt Design**
    Ensures Gemini always replies in the strict 5-section format.
@@ -122,7 +122,7 @@ generateTextWithSystemPrompt(
 
 ---
 
-## 📖 Example
+ 📖 Example
 
 ✨ Example generated web page:
 
@@ -132,18 +132,18 @@ generateTextWithSystemPrompt(
 
 ---
 
-## 📜 License
+ 📜 License
 
 This project is licensed under the **MIT License**.
 Feel free to use, modify, and distribute with attribution.
 
 ---
 
-## 💡 Author
+ 💡 Author
 
 👨‍💻 Built by **Prajjal Dhar**
 🌟 Contributions, feedback, and ⭐ stars are welcome!
 
-```
 
-```
+
+
